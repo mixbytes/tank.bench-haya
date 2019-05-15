@@ -1,0 +1,40 @@
+{
+  "name": "tank.bench-haya",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node dist/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mixbytes/tank.bench-haya.git"
+  },
+  "author": "",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/mixbytes/tank.bench-haya/issues"
+  },
+  "homepage": "https://github.com/mixbytes/tank.bench-haya#readme",
+  "dependencies": {
+    "eosjs": "^20.0.0",
+    "eosjs-ecc": "^4.0.4",
+    "node-eosjs-signature-provider": "^1.0.1",
+    "node-fetch": "^2.5.0",
+    "tank.bench-common": "^1.0.1",
+    "text-encoding": "^0.7.0"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.3.3",
+    "@types/text-encoding": "0.0.35",
+    "source-map-support": "^0.5.12",
+    "typescript": "^3.4.5"
+  }
+}
