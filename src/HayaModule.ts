@@ -14,9 +14,9 @@ export default class HayaModule implements BlockchainModule {
     }
 
     createPrepareStep(config: any, logger: Logger): PrepareStep {
-        if (fs.existsSync(convictConfig.getProperties().configFile)) {
+        if (fs.existsSync(config.configFile)) {
             try {
-                convictConfig.loadFile(Constants.configFilePath());
+                convictConfig.loadFile(config.configFile);
                 convictConfig.validate({allowed: 'strict'});
             } catch (e) {
                 console.error(e);
