@@ -4,9 +4,8 @@ import PrepareStep from "tank.bench-common/dist/module/steps/PrepareStep";
 import Logger from "tank.bench-common/dist/resources/Logger";
 import HayaModuleBenchStep from "./steps/HayaModuleBenchStep";
 import HayaModulePrepareStep from "./steps/HayaModulePrepareStep";
-import convictConfig from "./config/convictConfig";
 import * as fs from "fs";
-import Constants from "./constants/Constants";
+import getConvict from "./config/convictConfig";
 
 export default class HayaModule implements BlockchainModule {
     createBenchStep(config: any, logger: Logger): BenchStep {
@@ -14,9 +13,11 @@ export default class HayaModule implements BlockchainModule {
     }
 
     createPrepareStep(config: any, logger: Logger): PrepareStep {
-        if (fs.existsSync(config.configFile)) {
+        let convictConfig = getConvict();
+        let convictFile = convictConfig.getProperties().configFile;
+        if (fs.existsSync(convictFile)) {
             try {
-                convictConfig.loadFile(config.configFile);
+                convictConfig.loadFile(convictFile);
                 convictConfig.validate({allowed: 'strict'});
             } catch (e) {
                 console.error(e);
