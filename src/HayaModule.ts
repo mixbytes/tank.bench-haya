@@ -1,32 +1,28 @@
-import BlockchainModule from "tank.bench-common/dist/module/BlockchainModule";
-import BenchStep from "tank.bench-common/dist/module/steps/BenchStep";
-import PrepareStep from "tank.bench-common/dist/module/steps/PrepareStep";
-import Logger from "tank.bench-common/dist/resources/Logger";
+import {BenchStep, BlockchainModule, Logger, PrepareStep} from "tank.bench-common";
 import HayaModuleBenchStep from "./steps/HayaModuleBenchStep";
 import HayaModulePrepareStep from "./steps/HayaModulePrepareStep";
-import * as fs from "fs";
-import getConvict from "./config/convictConfig";
+import configTemplate from "./config/configSchema";
+import Constants from "./constants/Constants";
 
-export default class HayaModule implements BlockchainModule {
-    createBenchStep(config: any, logger: Logger): BenchStep {
-        return new HayaModuleBenchStep(config, logger);
+export default class HayaModule extends BlockchainModule {
+    createBenchStep(benchConfig: any, logger: Logger): BenchStep {
+        return new HayaModuleBenchStep(benchConfig, logger);
     }
 
-    createPrepareStep(config: any, logger: Logger): PrepareStep {
-        let convictConfig = getConvict();
-        let convictFile = convictConfig.getProperties().configFile;
-        if (fs.existsSync(convictFile)) {
-            try {
-                convictConfig.loadFile(convictFile);
-                convictConfig.validate({allowed: 'strict'});
-            } catch (e) {
-                console.error(e);
-            }
-        }
-        return new HayaModulePrepareStep({...config, eos: convictConfig.getProperties()}, logger);
+    createPrepareStep(commonConfig: any, moduleConfig: any, logger: Logger): PrepareStep {
+        return new HayaModulePrepareStep(commonConfig, moduleConfig, logger);
+    }
+
+    getConfigSchema(): any {
+        return configTemplate;
+    }
+
+    getDefaultConfigFilePath(): string | null {
+        return Constants.configFilePath();
     }
 
     getFileName(): string {
         return __filename;
     }
+
 }

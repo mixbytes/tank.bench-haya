@@ -2,15 +2,15 @@ import * as EosToolbox from "./HayaToolbox";
 import {randomAccountName} from "./HayaToolbox";
 import Strings from "../constants/Strings";
 import Constants from "../constants/Constants";
-import Logger from "tank.bench-common/dist/resources/Logger";
+import {Logger} from "tank.bench-common";
 
 export default class HayaAccountsPrepareTool {
 
-    private readonly config: any;
+    private readonly moduleConfig: any;
     private readonly logger: Logger;
 
-    constructor(config: any, logger: Logger) {
-        this.config = config;
+    constructor(moduleConfig: any, logger: Logger) {
+        this.moduleConfig = moduleConfig;
         this.logger = logger;
     }
 
@@ -19,9 +19,9 @@ export default class HayaAccountsPrepareTool {
         this.logger.log(Strings.log.preparingAccounts());
 
         let accountsToCheck = [
-            this.config.eos.tokenAccount,
-            this.config.eos.fromAccount,
-            this.config.eos.toAccount
+            this.moduleConfig.tokenAccount,
+            this.moduleConfig.fromAccount,
+            this.moduleConfig.toAccount
         ].map((account, i) => {
             return {
                 account, role: (() => {
@@ -52,7 +52,7 @@ export default class HayaAccountsPrepareTool {
                     actions: actionsAndLogs
                         .reduce((arr, actionAndLog) => arr.concat(actionAndLog.actions), [])
                         .filter((a: any) => a),
-                    config: this.config
+                    moduleConfig: this.moduleConfig
                 };
             })
     }
@@ -130,14 +130,14 @@ export default class HayaAccountsPrepareTool {
 
     _newAccount(account: any) {
         return Promise.resolve([{
-            account: this.config.eos.creatorAccount.name,
+            account: this.moduleConfig.creatorAccount.name,
             name: 'newaccount',
             authorization: [{
-                actor: this.config.eos.creatorAccount.name,
+                actor: this.moduleConfig.creatorAccount.name,
                 permission: 'active',
             }],
             data: {
-                creator: this.config.eos.creatorAccount.name,
+                creator: this.moduleConfig.creatorAccount.name,
                 name: account.name,
                 owner: {
                     threshold: 1,

@@ -1,7 +1,7 @@
 import {Api, JsonRpc} from "eosjs";
 import * as encoding from "text-encoding";
-import NodeEosSignatureProvider from "node-eosjs-signature-provider"
-import BenchStep from "tank.bench-common/dist/module/steps/BenchStep";
+import {BenchStep} from "tank.bench-common";
+import {JsSignatureProvider} from "eosjs/dist/eosjs-jssig";
 
 const fetch = require("node-fetch");
 
@@ -11,9 +11,9 @@ export default class HayaModuleBenchStep extends BenchStep {
     private transactionsConf?: { blocksBehind: any; expireSeconds: any };
 
     async asyncConstruct() {
-        this.rpc = new JsonRpc(this.config.eos.rpcUrl, {fetch});
+        this.rpc = new JsonRpc(this.benchConfig.rpcUrl, {fetch});
 
-        const signatureProvider = new NodeEosSignatureProvider(
+        const signatureProvider = new JsSignatureProvider(
             this.getKeyAccounts()
                 .filter(account => account.privateKey)
                 .map(account => account.privateKey)
@@ -27,29 +27,29 @@ export default class HayaModuleBenchStep extends BenchStep {
         });
 
         this.transactionsConf = {
-            blocksBehind: this.config.eos.blocksBehind,
-            expireSeconds: this.config.eos.expireSeconds,
+            blocksBehind: this.benchConfig.blocksBehind,
+            expireSeconds: this.benchConfig.expireSeconds,
         };
     }
 
     getKeyAccounts() {
-        return [this.config.eos.fromAccount];
+        return [this.benchConfig.fromAccount];
     }
 
     async commitBenchmarkTransaction(uniqueData: any) {
         return this.api!.transact({
             actions: [
                 {
-                    account: this.config.eos.tokenAccount.name,
+                    account: this.benchConfig.tokenAccount.name,
                     name: 'transfer',
                     authorization: [{
-                        actor: this.config.eos.fromAccount.name,
+                        actor: this.benchConfig.fromAccount.name,
                         permission: 'active',
                     }],
                     data: {
-                        from: this.config.eos.fromAccount.name,
-                        to: this.config.eos.toAccount.name,
-                        quantity: `${this.config.eos.transactions.tokensInOneTransfer} ${this.config.eos.transactions.tokenName}`,
+                        from: this.benchConfig.fromAccount.name,
+                        to: this.benchConfig.toAccount.name,
+                        quantity: `${this.benchConfig.transactions.tokensInOneTransfer} ${this.benchConfig.transactions.tokenName}`,
                         memo: uniqueData
                     }
                 }
