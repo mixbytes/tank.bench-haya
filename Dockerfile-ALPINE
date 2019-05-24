@@ -1,0 +1,11 @@
+FROM node:alpine
+
+COPY . /tool
+WORKDIR /tool
+
+RUN apk add libgmpxx libc6-compat \
+    && npm install \
+    && npm run build
+
+ENTRYPOINT ["npm", "start", "--"]
+CMD []
