@@ -1,7 +1,7 @@
 import {Api, JsonRpc} from "eosjs";
 import * as encoding from "text-encoding";
 import {BenchStep} from "tank.bench-common";
-import {JsSignatureProvider} from "eosjs/dist/eosjs-jssig";
+import NodeEosjsSignatureProvider from "node-eosjs-signature-provider";
 
 const fetch = require("node-fetch");
 
@@ -13,7 +13,7 @@ export default class HayaModuleBenchStep extends BenchStep {
     async asyncConstruct() {
         this.rpc = new JsonRpc(this.benchConfig.rpcUrl, {fetch});
 
-        const signatureProvider = new JsSignatureProvider(
+        const signatureProvider = new NodeEosjsSignatureProvider(
             this.getKeyAccounts()
                 .filter(account => account.privateKey)
                 .map(account => account.privateKey)
