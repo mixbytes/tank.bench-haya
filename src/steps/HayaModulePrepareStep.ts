@@ -2,9 +2,9 @@ import {Api, JsonRpc} from "eosjs";
 import * as encoding from 'text-encoding';
 import {JsSignatureProvider} from "eosjs/dist/eosjs-jssig";
 import HayaPrepareTool from "../tools/HayaPrepareTool";
-import PrepareStep from "tank.bench-common/dist/module/steps/PrepareStep";
 import Strings from "../constants/Strings";
 import HayaAccountsPrepareTool from "../tools/HayaAccountsPrepareTool";
+import {PrepareStep} from "tank.bench-common";
 
 const fetch = require("node-fetch");
 
@@ -14,38 +14,38 @@ export default class HayaModulePrepareStep extends PrepareStep {
     private api?: Api;
 
     async asyncConstruct() {
-        this.rpc = new JsonRpc(this.config.eos.rpcUrl, {fetch});
+        this.rpc = new JsonRpc(this.moduleConfig.rpcUrl, {fetch});
         this.transactionsConf = {
-            blocksBehind: this.config.eos.blocksBehind,
-            expireSeconds: this.config.eos.expireSeconds,
+            blocksBehind: this.moduleConfig.blocksBehind,
+            expireSeconds: this.moduleConfig.expireSeconds,
         };
         await this.prepareApi();
     }
 
     getKeyAccounts() {
-        return [this.config.eos.creatorAccount, this.config.eos.tokenAccount];
+        return [this.moduleConfig.creatorAccount, this.moduleConfig.tokenAccount];
     }
 
     async prepare() {
         let totalActions = 0;
-        let contractsPrepareTool = new HayaPrepareTool(this.config, this.logger, this.api!);
-        return await new HayaAccountsPrepareTool(this.config, this.logger)
+        let contractsPrepareTool = new HayaPrepareTool(this.moduleConfig, this.logger, this.api!);
+        return await new HayaAccountsPrepareTool(this.moduleConfig, this.logger)
             .prepare()
-            .then((actionsAndConfig: { config: any; actions: any; }) => {
-                this.config = actionsAndConfig.config;
+            .then((actionsAndConfig: { moduleConfig: any; actions: any; }) => {
+                this.moduleConfig = actionsAndConfig.moduleConfig;
                 totalActions += actionsAndConfig.actions.length;
                 return this.transact(actionsAndConfig.actions);
             })
             .then(() => this.prepareApi())
             .then(() => contractsPrepareTool.deployContracts())
             .then((actionsAndConfig: { config: any; actions: any; }) => {
-                this.config = actionsAndConfig.config;
+                this.moduleConfig = actionsAndConfig.config;
                 totalActions += actionsAndConfig.actions.length;
                 return this.transact(actionsAndConfig.actions);
             })
             .then(() => contractsPrepareTool.prepareTokens())
             .then((actionsAndConfig: { config: any; actions: any; }) => {
-                this.config = actionsAndConfig.config;
+                this.moduleConfig = actionsAndConfig.config;
                 totalActions += actionsAndConfig.actions.length;
                 return this.transact(actionsAndConfig.actions);
             })
@@ -55,7 +55,7 @@ export default class HayaModulePrepareStep extends PrepareStep {
                 } else {
                     this.logger.log(Strings.log.benchmarkPreparedNoTransaction());
                 }
-                return this.config;
+                return this.moduleConfig;
             });
     }
 

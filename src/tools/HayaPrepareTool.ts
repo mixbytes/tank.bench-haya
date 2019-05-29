@@ -1,16 +1,16 @@
 import * as fs from "fs";
 import {Serialize} from "eosjs";
-import Logger from "tank.bench-common/dist/resources/Logger";
 import {Api} from "eosjs/dist";
 import Strings from "../constants/Strings";
+import {Logger} from "tank.bench-common";
 
 export default class HayaPrepareTool {
-    private readonly config: any;
+    private readonly moduleConfig: any;
     private readonly api: Api;
     private readonly logger: Logger;
 
-    constructor(config: any, logger: Logger, api: Api) {
-        this.config = config;
+    constructor(moduleConfig: any, logger: Logger, api: Api) {
+        this.moduleConfig = moduleConfig;
         this.api = api;
         this.logger = logger;
     }
@@ -26,7 +26,7 @@ export default class HayaPrepareTool {
                 pushActions(actions);
                 return {
                     actions: allActions,
-                    config: this.config
+                    config: this.moduleConfig
                 }
             })
     }
@@ -46,13 +46,13 @@ export default class HayaPrepareTool {
                 pushActions(actions);
                 return {
                     actions: allActions,
-                    config: this.config
+                    config: this.moduleConfig
                 }
             })
     }
 
     private deployTokenContractIfNeeded() {
-        if (this.config.eos.transactions.deployTokenContract) {
+        if (this.moduleConfig.transactions.deployTokenContract) {
             this.logger.log(Strings.log.deployingTokenContract());
             return this.deployTokensContract();
         }
@@ -62,8 +62,8 @@ export default class HayaPrepareTool {
     }
 
     private createTokensIfNeeded() {
-        if (this.config.eos.transactions.createTokens) {
-            let quantity = `${this.config.eos.transactions.createTokensAmount} ${this.config.eos.transactions.tokenName}`;
+        if (this.moduleConfig.transactions.createTokens) {
+            let quantity = `${this.moduleConfig.transactions.createTokensAmount} ${this.moduleConfig.transactions.tokenName}`;
             this.logger.log(Strings.log.creatingTokens(quantity));
 
             return this.createTokens();
@@ -74,8 +74,8 @@ export default class HayaPrepareTool {
     }
 
     private issueTokensIfNeeded() {
-        if (this.config.eos.transactions.issueTokens) {
-            let quantity = `${this.config.eos.transactions.issueTokensAmount} ${this.config.eos.transactions.tokenName}`;
+        if (this.moduleConfig.transactions.issueTokens) {
+            let quantity = `${this.moduleConfig.transactions.issueTokensAmount} ${this.moduleConfig.transactions.tokenName}`;
             this.logger.log(Strings.log.issuingTokens(quantity));
 
             return this.issueTokens();
@@ -87,8 +87,8 @@ export default class HayaPrepareTool {
 
     private deployTokensContract(): Promise<any> {
         return new Promise((resolve) => {
-            let wasm = fs.readFileSync(this.config.eos.tokensContract.wasmFilePath);
-            let abiJson = fs.readFileSync(this.config.eos.tokensContract.abiFilePath);
+            let wasm = fs.readFileSync(this.moduleConfig.tokensContract.wasmFilePath);
+            let abiJson = fs.readFileSync(this.moduleConfig.tokensContract.abiFilePath);
             let abi = JSON.parse(abiJson.toString());
 
             let buffer = new Serialize.SerialBuffer({
@@ -110,28 +110,28 @@ export default class HayaPrepareTool {
 
             resolve([
                 {
-                    account: this.config.eos.creatorAccount.name,
+                    account: this.moduleConfig.creatorAccount.name,
                     name: 'setcode',
                     authorization: [{
-                        actor: this.config.eos.tokenAccount.name,
+                        actor: this.moduleConfig.tokenAccount.name,
                         permission: 'active',
                     }],
                     data: {
-                        account: this.config.eos.tokenAccount.name,
+                        account: this.moduleConfig.tokenAccount.name,
                         vmtype: 0,
                         vmversion: 0,
                         code: wasm
                     }
                 },
                 {
-                    account: this.config.eos.creatorAccount.name,
+                    account: this.moduleConfig.creatorAccount.name,
                     name: 'setabi',
                     authorization: [{
-                        actor: this.config.eos.tokenAccount.name,
+                        actor: this.moduleConfig.tokenAccount.name,
                         permission: 'active',
                     }],
                     data: {
-                        account: this.config.eos.tokenAccount.name,
+                        account: this.moduleConfig.tokenAccount.name,
                         abi: abiToSend
                     }
                 }
@@ -141,15 +141,15 @@ export default class HayaPrepareTool {
 
     private issueTokens() {
         return Promise.resolve([{
-            account: this.config.eos.tokenAccount.name,
+            account: this.moduleConfig.tokenAccount.name,
             name: 'issue',
             authorization: [{
-                actor: this.config.eos.tokenAccount.name,
+                actor: this.moduleConfig.tokenAccount.name,
                 permission: 'active',
             }],
             data: {
-                to: this.config.eos.fromAccount.name,
-                quantity: `${this.config.eos.transactions.issueTokensAmount} ${this.config.eos.transactions.tokenName}`,
+                to: this.moduleConfig.fromAccount.name,
+                quantity: `${this.moduleConfig.transactions.issueTokensAmount} ${this.moduleConfig.transactions.tokenName}`,
                 memo: ""
             }
         }]);
@@ -157,15 +157,15 @@ export default class HayaPrepareTool {
 
     private createTokens() {
         return Promise.resolve([{
-            account: this.config.eos.tokenAccount.name,
+            account: this.moduleConfig.tokenAccount.name,
             name: 'create',
             authorization: [{
-                actor: this.config.eos.tokenAccount.name,
+                actor: this.moduleConfig.tokenAccount.name,
                 permission: 'active',
             }],
             data: {
-                issuer: this.config.eos.tokenAccount.name,
-                maximum_supply: `${this.config.eos.transactions.issueTokensAmount} ${this.config.eos.transactions.tokenName}`
+                issuer: this.moduleConfig.tokenAccount.name,
+                maximum_supply: `${this.moduleConfig.transactions.issueTokensAmount} ${this.moduleConfig.transactions.tokenName}`
             }
         }]);
     }
