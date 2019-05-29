@@ -37,17 +37,20 @@ export default class HayaModulePrepareStep extends PrepareStep {
                 return this.transact(actionsAndConfig.actions);
             })
             .then(() => this.prepareApi())
-            .then(() => contractsPrepareTool.deployContracts())
-            .then((actionsAndConfig: { config: any; actions: any; }) => {
-                this.moduleConfig = actionsAndConfig.config;
-                totalActions += actionsAndConfig.actions.length;
-                return this.transact(actionsAndConfig.actions);
+            .then(() => contractsPrepareTool.deployTokenContractIfNeeded())
+            .then((actions: any) => {
+                totalActions += actions.length;
+                return this.transact(actions);
             })
-            .then(() => contractsPrepareTool.prepareTokens())
-            .then((actionsAndConfig: { config: any; actions: any; }) => {
-                this.moduleConfig = actionsAndConfig.config;
-                totalActions += actionsAndConfig.actions.length;
-                return this.transact(actionsAndConfig.actions);
+            .then(() => contractsPrepareTool.createTokensIfNeeded())
+            .then((actions: any) => {
+                totalActions += actions.length;
+                return this.transact(actions);
+            })
+            .then(() => contractsPrepareTool.issueTokensIfNeeded())
+            .then((actions: any) => {
+                totalActions += actions.length;
+                return this.transact(actions);
             })
             .then(() => {
                 if (totalActions !== 0) {
@@ -55,6 +58,18 @@ export default class HayaModulePrepareStep extends PrepareStep {
                 } else {
                     this.logger.log(Strings.log.benchmarkPreparedNoTransaction());
                 }
+                return this.rpc!.get_info();
+            })
+            .then(async infoResult => {
+                this.moduleConfig.chainId = infoResult.chain_id;
+                return this.rpc!.get_block(infoResult.head_block_num - this.moduleConfig.blocksBehind);
+            })
+            .then(block => {
+                this.moduleConfig.refBlock = block;
+                this.moduleConfig.abis = [{
+                    accountName: this.moduleConfig.creatorAccount.name,
+                    abi: contractsPrepareTool.getAbi(),
+                }];
                 return this.moduleConfig;
             });
     }

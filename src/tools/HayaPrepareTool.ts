@@ -15,43 +15,7 @@ export default class HayaPrepareTool {
         this.logger = logger;
     }
 
-    deployContracts(): Promise<any> {
-        let allActions: any[] = [];
-        let pushActions = (actions: any[]) => {
-            allActions = allActions.concat(actions);
-        };
-
-        return this.deployTokenContractIfNeeded()
-            .then(actions => {
-                pushActions(actions);
-                return {
-                    actions: allActions,
-                    config: this.moduleConfig
-                }
-            })
-    }
-
-    prepareTokens(): Promise<any> {
-        let allActions: any[] = [];
-        let pushActions = (actions: any[]) => {
-            allActions = allActions.concat(actions);
-        };
-
-        return this.createTokensIfNeeded()
-            .then(actions => {
-                pushActions(actions);
-                return this.issueTokensIfNeeded();
-            })
-            .then(actions => {
-                pushActions(actions);
-                return {
-                    actions: allActions,
-                    config: this.moduleConfig
-                }
-            })
-    }
-
-    private deployTokenContractIfNeeded() {
+    deployTokenContractIfNeeded() {
         if (this.moduleConfig.transactions.deployTokenContract) {
             this.logger.log(Strings.log.deployingTokenContract());
             return this.deployTokensContract();
@@ -61,7 +25,7 @@ export default class HayaPrepareTool {
         return Promise.resolve([]);
     }
 
-    private createTokensIfNeeded() {
+    createTokensIfNeeded() {
         if (this.moduleConfig.transactions.createTokens) {
             let quantity = `${this.moduleConfig.transactions.createTokensAmount} ${this.moduleConfig.transactions.tokenName}`;
             this.logger.log(Strings.log.creatingTokens(quantity));
@@ -73,7 +37,7 @@ export default class HayaPrepareTool {
         return Promise.resolve([]);
     }
 
-    private issueTokensIfNeeded() {
+    issueTokensIfNeeded() {
         if (this.moduleConfig.transactions.issueTokens) {
             let quantity = `${this.moduleConfig.transactions.issueTokensAmount} ${this.moduleConfig.transactions.tokenName}`;
             this.logger.log(Strings.log.issuingTokens(quantity));
@@ -85,28 +49,31 @@ export default class HayaPrepareTool {
         return Promise.resolve([]);
     }
 
+    getAbi(): any {
+        let buffer = new Serialize.SerialBuffer({
+            textEncoder: this.api.textEncoder,
+            textDecoder: this.api.textDecoder,
+        });
+
+        let abiJson = fs.readFileSync(this.moduleConfig.tokensContract.abiFilePath);
+        let abi = JSON.parse(abiJson.toString());
+
+        let abiDefinition = this.api.abiTypes.get('abi_def');
+        if (!abiDefinition) {
+            return;
+        }
+        let abiToSerialize = abiDefinition.fields.reduce(
+            (acc, {name: fieldName}) => Object.assign(acc, {[fieldName]: acc[fieldName] || []}),
+            abi,
+        );
+        abiDefinition.serialize(buffer, abiToSerialize);
+        return buffer.asUint8Array();
+    }
+
     private deployTokensContract(): Promise<any> {
         return new Promise((resolve) => {
             let wasm = fs.readFileSync(this.moduleConfig.tokensContract.wasmFilePath);
-            let abiJson = fs.readFileSync(this.moduleConfig.tokensContract.abiFilePath);
-            let abi = JSON.parse(abiJson.toString());
-
-            let buffer = new Serialize.SerialBuffer({
-                textEncoder: this.api.textEncoder,
-                textDecoder: this.api.textDecoder,
-            });
-
-            let abiDefinition = this.api.abiTypes.get('abi_def');
-            if (!abiDefinition) {
-                resolve([]);
-                return;
-            }
-            let abiToSerialize = abiDefinition.fields.reduce(
-                (acc, {name: fieldName}) => Object.assign(acc, {[fieldName]: acc[fieldName] || []}),
-                abi,
-            );
-            abiDefinition.serialize(buffer, abiToSerialize);
-            let abiToSend = Buffer.from(buffer.asUint8Array()).toString(`hex`);
+            let abi = Buffer.from(this.getAbi()).toString(`hex`);
 
             resolve([
                 {
@@ -132,7 +99,7 @@ export default class HayaPrepareTool {
                     }],
                     data: {
                         account: this.moduleConfig.tokenAccount.name,
-                        abi: abiToSend
+                        abi: abi
                     }
                 }
             ])
