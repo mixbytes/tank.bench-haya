@@ -1,6 +1,6 @@
 {
   "name": "tank.bench-haya",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Blockchain load applier implementation for Haya blockchain",
   "main": "index.js",
   "scripts": {
