@@ -47,37 +47,6 @@ export default class HayaModuleBenchStep extends BenchStep {
         };
     }
 
-    async commitBenchmarkTransaction(uniqueData: any) {
-        let api = this.api!;
-        let exp = (new Date().getTime() + this.benchConfig.expireSeconds * 1000) * 1000;
-        let transaction = {
-            expiration: ser.timePointToDate(exp),
-            ...this.transactionDummy,
-            actions: await api.serializeActions(this.getActions(uniqueData))
-        };
-        let serializedTransaction = api.serializeTransaction(transaction);
-
-        let signArgs: SignatureProviderArgs = {
-            requiredKeys: [this.benchConfig.fromAccount.publicKey],
-            abis: this.benchConfig.abis,
-            chainId: api.chainId,
-            serializedTransaction: serializedTransaction
-        };
-
-        let pushTransactionArgs = await this.signatureProvider!.sign(signArgs);
-
-        try {
-            await this.rpc!.push_transaction(pushTransactionArgs);
-        } catch (e) {
-            try {
-                return e.json.code
-            } catch (e2) {
-                return -1;
-            }
-        }
-
-        return 200;
-    }
 
     private getKeyAccounts() {
         return [this.benchConfig.fromAccount];
@@ -100,6 +69,38 @@ export default class HayaModuleBenchStep extends BenchStep {
                 }
             }
         ]
+    }
+
+    async commitBenchmarkTransaction(uniqueData: any) {
+        let api = this.api!;
+        let exp = (new Date().getTime() + this.benchConfig.expireSeconds * 1000) * 1000;
+        let transaction = {
+            expiration: ser.timePointToDate(exp),
+            ...this.transactionDummy,
+            actions: await api.serializeActions(this.getActions(uniqueData))
+        };
+        let serializedTransaction = api.serializeTransaction(transaction);
+
+        let signArgs: SignatureProviderArgs = {
+            requiredKeys: [this.benchConfig.fromAccount.publicKey],
+            abis: this.benchConfig.abis,
+            chainId: api.chainId,
+            serializedTransaction: serializedTransaction
+        };
+
+        let pushTransactionArgs = await this.signatureProvider!.sign(signArgs);
+
+        try {
+            await this.rpc!.push_transaction(pushTransactionArgs);
+            return {code: 200, error: null}
+
+        } catch (e) {
+            try {
+                return {code: e.json.code, error: e}
+            } catch (e2) {
+                return {code: -1, error: e}
+            }
+        }
     }
 
     // return this.api!.transact({
