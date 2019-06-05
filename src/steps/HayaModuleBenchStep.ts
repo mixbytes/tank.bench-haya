@@ -3,7 +3,7 @@ import * as encoding from "text-encoding";
 import {BenchStep} from "tank.bench-common";
 import {timePointToDate} from "eosjs/dist/eosjs-serialize";
 import {SignatureProvider, SignatureProviderArgs} from "eosjs/dist/eosjs-api-interfaces";
-import NodeEosjsSignatureProvider from "node-eosjs-signature-provider";
+import {JsSignatureProvider} from "eosjs/dist/eosjs-jssig";
 
 const fetch = require("node-fetch");
 
@@ -14,10 +14,14 @@ export default class HayaModuleBenchStep extends BenchStep {
     private transactionDummy: any;
     private signatureProvider?: SignatureProvider;
 
-    async asyncConstruct() {
-        this.rpc = new JsonRpc(this.benchConfig.rpcUrl, {fetch});
+    async asyncConstruct(threadId: number) {
 
-        this.signatureProvider = new NodeEosjsSignatureProvider(
+        this.rpc = new JsonRpc(
+            this.benchConfig.rpcUrls[Math.floor(threadId / this.benchConfig.urlsPerThread)],
+            {fetch}
+        );
+
+        this.signatureProvider = new JsSignatureProvider(
             this.getKeyAccounts()
                 .filter(account => account.privateKey)
                 .map(account => account.privateKey)
