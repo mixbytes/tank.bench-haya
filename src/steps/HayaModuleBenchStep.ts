@@ -1,7 +1,7 @@
 import {Api, JsonRpc} from "eosjs";
 import * as encoding from "text-encoding";
 import {BenchStep} from "tank.bench-common";
-import {timePointToDate} from "eosjs/dist/eosjs-serialize";
+import * as ser from "eosjs/dist/eosjs-serialize";
 import {SignatureProvider, SignatureProviderArgs} from "eosjs/dist/eosjs-api-interfaces";
 import {JsSignatureProvider} from "eosjs/dist/eosjs-jssig";
 
@@ -51,7 +51,7 @@ export default class HayaModuleBenchStep extends BenchStep {
         let api = this.api!;
         let exp = (new Date().getTime() + this.benchConfig.expireSeconds * 1000) * 1000;
         let transaction = {
-            expiration: timePointToDate(exp),
+            expiration: ser.timePointToDate(exp),
             ...this.transactionDummy,
             actions: await api.serializeActions(this.getActions(uniqueData))
         };

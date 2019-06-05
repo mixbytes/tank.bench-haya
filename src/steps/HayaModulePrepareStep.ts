@@ -71,7 +71,7 @@ export default class HayaModulePrepareStep extends PrepareStep {
                     accountName: this.moduleConfig.creatorAccount.name,
                     abi: contractsPrepareTool.getAbi(),
                 }];
-                this.moduleConfig.urlsPerThread = this.commonConfig.threadsAmout / this.moduleConfig.rpcUrls.length;
+                this.moduleConfig.urlsPerThread = this.commonConfig.threadsAmount / this.moduleConfig.rpcUrls.length;
                 return this.moduleConfig;
             });
     }
