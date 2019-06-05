@@ -3,7 +3,7 @@ import * as encoding from "text-encoding";
 import {BenchStep} from "tank.bench-common";
 import * as ser from "eosjs/dist/eosjs-serialize";
 import {SignatureProvider, SignatureProviderArgs} from "eosjs/dist/eosjs-api-interfaces";
-import {JsSignatureProvider} from "eosjs/dist/eosjs-jssig";
+import NodeEosjsSignatureProvider from "node-eosjs-signature-provider";
 
 const fetch = require("node-fetch");
 
@@ -21,7 +21,7 @@ export default class HayaModuleBenchStep extends BenchStep {
             {fetch}
         );
 
-        this.signatureProvider = new JsSignatureProvider(
+        this.signatureProvider = new NodeEosjsSignatureProvider(
             this.getKeyAccounts()
                 .filter(account => account.privateKey)
                 .map(account => account.privateKey)
