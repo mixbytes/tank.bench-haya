@@ -23,7 +23,7 @@
     "eosjs-ecc": "^4.0.4",
     "node-eosjs-signature-provider": "^1.0.3",
     "node-fetch": "^2.6.0",
-    "tank.bench-common": "1.3.2",
+    "tank.bench-common": "1.4.1",
     "text-encoding": "^0.7.0",
     "@types/node-fetch": "^2.3.4",
     "@types/text-encoding": "0.0.35"

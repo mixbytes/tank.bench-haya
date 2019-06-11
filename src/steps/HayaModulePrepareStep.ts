@@ -14,7 +14,7 @@ export default class HayaModulePrepareStep extends PrepareStep {
     private api?: Api;
 
     async asyncConstruct() {
-        this.rpc = new JsonRpc(this.moduleConfig.rpcUrl, {fetch});
+        this.rpc = new JsonRpc(this.moduleConfig.rpcUrls[0], {fetch});
         this.transactionsConf = {
             blocksBehind: this.moduleConfig.blocksBehind,
             expireSeconds: this.moduleConfig.expireSeconds,
@@ -27,6 +27,7 @@ export default class HayaModulePrepareStep extends PrepareStep {
     }
 
     async prepare() {
+        this.checkConfig();
         let totalActions = 0;
         let contractsPrepareTool = new HayaPrepareTool(this.moduleConfig, this.logger, this.api!);
         return await new HayaAccountsPrepareTool(this.moduleConfig, this.logger)
@@ -70,8 +71,14 @@ export default class HayaModulePrepareStep extends PrepareStep {
                     accountName: this.moduleConfig.creatorAccount.name,
                     abi: contractsPrepareTool.getAbi(),
                 }];
+                this.moduleConfig.urlsPerThread = this.commonConfig.threadsAmount / this.moduleConfig.rpcUrls.length;
                 return this.moduleConfig;
             });
+    }
+
+    private checkConfig() {
+        if (this.commonConfig.threadsAmount % this.moduleConfig.rpcUrls.length !== 0)
+            throw new Error("rpcUrls amount must be multiple of commonConfig.threadsAmount");
     }
 
     async prepareApi() {

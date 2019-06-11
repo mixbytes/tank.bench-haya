@@ -1,9 +1,9 @@
 export default {
-    rpcUrl: {
+    rpcUrls: {
         arg: 'eos.rpcUrl',
-        format: String,
+        format: Array,
         default: null,
-        doc: "RPC url"
+        doc: "RPC urls, must be multiple of commonConfig.threadsAmount"
     },
     tokensContract: {
         wasmFilePath: {

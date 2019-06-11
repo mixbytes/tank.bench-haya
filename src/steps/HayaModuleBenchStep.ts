@@ -1,7 +1,7 @@
 import {Api, JsonRpc} from "eosjs";
 import * as encoding from "text-encoding";
 import {BenchStep} from "tank.bench-common";
-import {timePointToDate} from "eosjs/dist/eosjs-serialize";
+import * as ser from "eosjs/dist/eosjs-serialize";
 import {SignatureProvider, SignatureProviderArgs} from "eosjs/dist/eosjs-api-interfaces";
 import NodeEosjsSignatureProvider from "node-eosjs-signature-provider";
 
@@ -14,8 +14,12 @@ export default class HayaModuleBenchStep extends BenchStep {
     private transactionDummy: any;
     private signatureProvider?: SignatureProvider;
 
-    async asyncConstruct() {
-        this.rpc = new JsonRpc(this.benchConfig.rpcUrl, {fetch});
+    async asyncConstruct(threadId: number) {
+
+        this.rpc = new JsonRpc(
+            this.benchConfig.rpcUrls[Math.floor(threadId / this.benchConfig.urlsPerThread)],
+            {fetch}
+        );
 
         this.signatureProvider = new NodeEosjsSignatureProvider(
             this.getKeyAccounts()
@@ -43,37 +47,6 @@ export default class HayaModuleBenchStep extends BenchStep {
         };
     }
 
-    async commitBenchmarkTransaction(uniqueData: any) {
-        let api = this.api!;
-        let exp = (new Date().getTime() + this.benchConfig.expireSeconds * 1000) * 1000;
-        let transaction = {
-            expiration: timePointToDate(exp),
-            ...this.transactionDummy,
-            actions: await api.serializeActions(this.getActions(uniqueData))
-        };
-        let serializedTransaction = api.serializeTransaction(transaction);
-
-        let signArgs: SignatureProviderArgs = {
-            requiredKeys: [this.benchConfig.fromAccount.publicKey],
-            abis: this.benchConfig.abis,
-            chainId: api.chainId,
-            serializedTransaction: serializedTransaction
-        };
-
-        let pushTransactionArgs = await this.signatureProvider!.sign(signArgs);
-
-        try {
-            await this.rpc!.push_transaction(pushTransactionArgs);
-        } catch (e) {
-            try {
-                return e.json.code
-            } catch (e2) {
-                return -1;
-            }
-        }
-
-        return 200;
-    }
 
     private getKeyAccounts() {
         return [this.benchConfig.fromAccount];
@@ -96,6 +69,38 @@ export default class HayaModuleBenchStep extends BenchStep {
                 }
             }
         ]
+    }
+
+    async commitBenchmarkTransaction(uniqueData: any) {
+        let api = this.api!;
+        let exp = (new Date().getTime() + this.benchConfig.expireSeconds * 1000) * 1000;
+        let transaction = {
+            expiration: ser.timePointToDate(exp),
+            ...this.transactionDummy,
+            actions: await api.serializeActions(this.getActions(uniqueData))
+        };
+        let serializedTransaction = api.serializeTransaction(transaction);
+
+        let signArgs: SignatureProviderArgs = {
+            requiredKeys: [this.benchConfig.fromAccount.publicKey],
+            abis: this.benchConfig.abis,
+            chainId: api.chainId,
+            serializedTransaction: serializedTransaction
+        };
+
+        let pushTransactionArgs = await this.signatureProvider!.sign(signArgs);
+
+        try {
+            await this.rpc!.push_transaction(pushTransactionArgs);
+            return {code: 200, error: null}
+
+        } catch (e) {
+            try {
+                return {code: e.json.code, error: e}
+            } catch (e2) {
+                return {code: -1, error: e}
+            }
+        }
     }
 
     // return this.api!.transact({

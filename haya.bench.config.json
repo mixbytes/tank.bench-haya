@@ -1,5 +1,8 @@
 {
-  "rpcUrl": "http://0.0.0.0:8888",
+  "rpcUrls": [
+    "http://0.0.0.0:8888",
+    "http://0.0.0.0:8889"
+  ],
   "tokensContract": {
     "wasmFilePath": "./src/contracts/eosio.token/eosio.token.wasm",
     "abiFilePath": "./src/contracts/eosio.token/eosio.token.abi"
