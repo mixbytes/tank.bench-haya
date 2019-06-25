@@ -8,7 +8,7 @@
     "enable": false,
     "url": "http://127.0.0.1:9091"
   },
-  "tps": 5,
+  "tps": 50,
   "telemetryStepInterval": 1000,
   "threadsAmount": 10,
   "maxActivePromises": 10
