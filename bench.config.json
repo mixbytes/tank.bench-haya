@@ -1,7 +1,7 @@
 {
   "logLevel": 3,
   "stopOn": {
-    "error": "print",
+    "error": "no",
     "processedTransactions": 3000
   },
   "prometheusTelemetry": {
