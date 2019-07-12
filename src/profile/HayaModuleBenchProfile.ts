@@ -1,18 +1,13 @@
 import {Api, JsonRpc} from "eosjs";
 import * as encoding from "text-encoding";
-import {BenchProfile, BuiltinBenchProfile} from "tank.bench-common";
+import {BenchProfile} from "tank.bench-common";
 import * as ser from "eosjs/dist/eosjs-serialize";
 import {SignatureProvider, SignatureProviderArgs} from "eosjs/dist/eosjs-api-interfaces";
 import NodeEosjsSignatureProvider from "node-eosjs-signature-provider";
 
 const fetch = require("node-fetch");
 
-export default class HayaModuleDefaultProfile extends BenchProfile {
-
-    static readonly profileMeta: BuiltinBenchProfile = {
-        fileName: __filename,
-        name: "default"
-    };
+export default class HayaModuleBenchProfile extends BenchProfile {
 
     private rpc?: JsonRpc;
     private api?: Api;

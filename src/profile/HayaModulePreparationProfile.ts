@@ -4,11 +4,11 @@ import {JsSignatureProvider} from "eosjs/dist/eosjs-jssig";
 import HayaPrepareTool from "../tools/HayaPrepareTool";
 import Strings from "../constants/Strings";
 import HayaAccountsPrepareTool from "../tools/HayaAccountsPrepareTool";
-import {Preparation} from "tank.bench-common";
+import {PreparationProfile} from "tank.bench-common";
 
 const fetch = require("node-fetch");
 
-export default class HayaModulePrepareStep extends Preparation {
+export default class HayaModulePreparationProfile extends PreparationProfile {
     private rpc?: JsonRpc;
     private transactionsConf?: { blocksBehind: any; expireSeconds: any };
     private api?: Api;

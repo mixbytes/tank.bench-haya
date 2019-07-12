@@ -1,11 +1,12 @@
 const ser = require("eosjs").Serialize;
 const encoding = require("text-encoding");
-const {BenchCase} = require("tank.bench-common");
-const NodeEosjsSignatureProvider = require("node-eosjs-signature-provider").default;
+const {BenchProfile} = require("tank.bench-common/dist/lib/index");
+const NodeEosjsSignatureProvider = require("node-eosjs-signature-provider/dist/index").default;
 const fetch = require("node-fetch");
 const {Api, JsonRpc} = require("eosjs");
 
-class HayaModuleBenchCase extends BenchCase {
+class SimpleBenchProfile extends BenchProfile {
+
     async asyncConstruct(threadId) {
         this.rpc = new JsonRpc(
             this.benchConfig.rpcUrls[Math.floor(threadId / this.benchConfig.urlsPerThread)],
@@ -94,4 +95,4 @@ class HayaModuleBenchCase extends BenchCase {
     }
 }
 
-module.exports = HayaModuleBenchCase;
+module.exports = SimpleBenchProfile;
