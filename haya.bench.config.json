@@ -19,7 +19,8 @@
     "keyPoints": 10,
     "keyPointsAmount": 1000,
     "threadsAmount": 8,
-    "stopOnError": "print"
+    "stopOnError": "print",
+    "highloadWritesCount": 100
   },
   "creatorAccount": {
     "name": "eosio",

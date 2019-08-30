@@ -1,9 +1,9 @@
 import {Api, JsonRpc} from "eosjs";
 import * as encoding from 'text-encoding';
 import {JsSignatureProvider} from "eosjs/dist/eosjs-jssig";
-import HayaPrepareTool from "../tools/HayaPrepareTool";
-import Strings from "../constants/Strings";
-import HayaAccountsPrepareTool from "../tools/HayaAccountsPrepareTool";
+import HayaPrepareTool from "../../tools/HayaPrepareTool";
+import Strings from "../../constants/Strings";
+import HayaAccountsPrepareTool from "../../tools/HayaAccountsPrepareTool";
 import {PreparationProfile} from "tank.bench-common";
 
 const fetch = require("node-fetch");

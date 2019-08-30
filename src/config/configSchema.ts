@@ -102,6 +102,12 @@ export default {
             default: null,
             doc: "weather to stop benchmark on blockchain errors or not. Available values - (\"block\", \"fetch\", \"no\")"
         },
+        highloadWritesCount: {
+            arg: 'transactions.highloadWritesCount',
+            format: "int",
+            default: null,
+            doc: "count of writes in one method call during storage highload test"
+        }
     },
     creatorAccount: {
         name: {

@@ -1,18 +1,17 @@
 import {BlockchainModule, BuiltinProfile} from "tank.bench-common";
-import configTemplate from "./config/configSchema";
 import Constants from "./constants/Constants";
-import HayaModuleDefaultProfile from "./profile/HayaModuleDefaultProfile";
+import HayaModuleDefaultProfile from "./profile/default/HayaModuleDefaultProfile";
+import StorageHighloadProfile from "./profile/storageHighload/StorageHighloadProfile";
 
 export default class HayaModule extends BlockchainModule {
     getBuiltinProfiles(): BuiltinProfile[] {
         return [{
             profile: HayaModuleDefaultProfile,
             name: "default"
+        }, {
+            profile: StorageHighloadProfile,
+            name: "storage_highload"
         }];
-    }
-
-    getConfigSchema(): any {
-        return configTemplate;
     }
 
     getDefaultConfigFilePath(): string | null {
