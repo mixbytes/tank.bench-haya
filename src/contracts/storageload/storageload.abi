@@ -4,17 +4,21 @@
     "types": [],
     "structs": [
         {
-            "name": "rewrite",
+            "name": "vector_struct",
             "base": "",
             "fields": [
                 {
-                    "name": "size",
+                    "name": "id",
                     "type": "int32"
+                },
+                {
+                    "name": "vector",
+                    "type": "float64[]"
                 }
             ]
         },
         {
-            "name": "unique",
+            "name": "write",
             "base": "",
             "fields": [
                 {
@@ -30,17 +34,20 @@
     ],
     "actions": [
         {
-            "name": "rewrite",
-            "type": "rewrite",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "unique",
-            "type": "unique",
+            "name": "write",
+            "type": "write",
             "ricardian_contract": ""
         }
     ],
-    "tables": [],
+    "tables": [
+        {
+            "name": "vectors",
+            "type": "vector_struct",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
     "ricardian_clauses": [],
     "variants": []
 }

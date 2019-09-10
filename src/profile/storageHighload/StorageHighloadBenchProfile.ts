@@ -93,7 +93,7 @@ export default class StorageHighloadBenchProfile extends BenchProfile {
         return [
             {
                 "account": this.benchConfig.fromAccount.name,
-                "name": "unique",
+                "name": "write",
                 "data": {
                     "size": this.benchConfig.transactions.highloadWritesCount,
                     "unique": uniqueData
