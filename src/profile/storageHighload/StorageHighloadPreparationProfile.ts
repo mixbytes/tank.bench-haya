@@ -44,7 +44,7 @@ export default class StorageHighloadPreparationProfile extends PreparationProfil
             textDecoder: api.textDecoder,
         });
 
-        let abiJson = fs.readFileSync("src/contracts/storageload/storageload/storageload.abi");
+        let abiJson = fs.readFileSync("src/contracts/storageload/storageload.abi");
         let abi = JSON.parse(abiJson.toString());
 
         let abiDefinition = api.abiTypes.get('abi_def');
@@ -61,7 +61,7 @@ export default class StorageHighloadPreparationProfile extends PreparationProfil
 
     private async deployContract(config: any, account: any, api: Api): Promise<any> {
         return new Promise((resolve) => {
-            let wasm = fs.readFileSync("src/contracts/storageload/storageload/storageload.wasm").toString(`hex`);
+            let wasm = fs.readFileSync("src/contracts/storageload/storageload.wasm").toString(`hex`);
             let abi = Buffer.from(this.getAbi(api)).toString(`hex`);
 
             resolve([
