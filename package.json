@@ -23,13 +23,13 @@
     "eosjs-ecc": "^4.0.4",
     "node-eosjs-signature-provider": "2.0.2",
     "node-fetch": "^2.6.0",
-    "tank.bench-common": "4.0.0",
+    "tank.bench-common": "4.0.2",
     "text-encoding": "^0.7.0",
     "@types/node-fetch": "^2.5.0",
     "@types/text-encoding": "0.0.35"
   },
   "devDependencies": {
     "source-map-support": "^0.5.13",
-    "typescript": "^3.6.2"
+    "typescript": "^3.6.3"
   }
 }
