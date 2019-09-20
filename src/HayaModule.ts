@@ -5,13 +5,7 @@ import StorageHighloadProfile from "./profile/storageHighload/StorageHighloadPro
 
 export default class HayaModule extends BlockchainModule {
     getBuiltinProfiles(): BuiltinProfile[] {
-        return [{
-            profile: HayaModuleDefaultProfile,
-            name: "default"
-        }, {
-            profile: StorageHighloadProfile,
-            name: "storage_highload"
-        }];
+        return [HayaModuleDefaultProfile, StorageHighloadProfile];
     }
 
     getDefaultConfigFilePath(): string | null {

@@ -130,7 +130,7 @@ export default class HayaAccountsPrepareTool {
 
     _newAccount(account: any) {
         return Promise.resolve([{
-            account: this.moduleConfig.creatorAccount.name,
+            account: "eosio",
             name: 'newaccount',
             authorization: [{
                 actor: this.moduleConfig.creatorAccount.name,

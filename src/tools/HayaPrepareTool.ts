@@ -77,7 +77,7 @@ export default class HayaPrepareTool {
 
             resolve([
                 {
-                    account: this.moduleConfig.creatorAccount.name,
+                    account: "eosio",
                     name: 'setcode',
                     authorization: [{
                         actor: this.moduleConfig.tokenAccount.name,
@@ -91,7 +91,7 @@ export default class HayaPrepareTool {
                     }
                 },
                 {
-                    account: this.moduleConfig.creatorAccount.name,
+                    account: "eosio",
                     name: 'setabi',
                     authorization: [{
                         actor: this.moduleConfig.tokenAccount.name,
