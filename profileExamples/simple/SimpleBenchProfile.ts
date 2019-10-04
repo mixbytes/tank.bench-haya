@@ -1,13 +1,22 @@
-const ser = require("eosjs").Serialize;
-const encoding = require("text-encoding");
-const {BenchProfile} = require("tank.bench-common/dist/lib/index");
-const NodeEosjsSignatureProvider = require("node-eosjs-signature-provider/dist/index").default;
+import {Api, JsonRpc} from "eosjs";
+import * as encoding from "text-encoding";
+import {BenchProfile} from "tank.bench-common";
+import * as ser from "eosjs/dist/eosjs-serialize";
+import {SignatureProvider, SignatureProviderArgs} from "eosjs/dist/eosjs-api-interfaces";
+import NodeEosjsSignatureProvider from "node-eosjs-signature-provider";
+
 const fetch = require("node-fetch");
-const {Api, JsonRpc} = require("eosjs");
 
-class SimpleBenchProfile extends BenchProfile {
+export default class SimpleBenchProfile extends BenchProfile {
 
-    async asyncConstruct(threadId) {
+    private rpc?: JsonRpc;
+    private api?: Api;
+    private transactionsConf?: { blocksBehind: any; expireSeconds: any };
+    private transactionDummy: any;
+    private signatureProvider?: SignatureProvider;
+
+    async asyncConstruct(threadId: number) {
+
         this.rpc = new JsonRpc(
             this.benchConfig.rpcUrls[Math.floor(threadId / this.benchConfig.urlsPerThread)],
             {fetch}
@@ -20,8 +29,8 @@ class SimpleBenchProfile extends BenchProfile {
         );
 
         this.api = new Api({
-            rpc: this.rpc,
-            signatureProvider: this.signatureProvider,
+            rpc: this.rpc!,
+            signatureProvider: this.signatureProvider!,
             textDecoder: new encoding.TextDecoder(),
             textEncoder: new encoding.TextEncoder(),
         });
@@ -39,12 +48,43 @@ class SimpleBenchProfile extends BenchProfile {
         };
     }
 
+    async commitTransaction(uniqueData: any) {
+        let api = this.api!;
+        let exp = (new Date().getTime() + this.benchConfig.expireSeconds * 1000) * 1000;
+        let transaction = {
+            expiration: ser.timePointToDate(exp),
+            ...this.transactionDummy,
+            actions: await api.serializeActions(this.getActions(uniqueData))
+        };
+        let serializedTransaction = api.serializeTransaction(transaction);
 
-    getKeyAccounts() {
+        let signArgs: SignatureProviderArgs = {
+            requiredKeys: [this.benchConfig.fromAccount.publicKey],
+            abis: this.benchConfig.abis,
+            chainId: api.chainId,
+            serializedTransaction: serializedTransaction
+        };
+
+        let pushTransactionArgs = await this.signatureProvider!.sign(signArgs);
+
+        try {
+            await this.rpc!.push_transaction(pushTransactionArgs);
+            return {code: 200, error: null}
+
+        } catch (e) {
+            try {
+                return {code: e.json.code, error: e}
+            } catch (e2) {
+                return {code: -1, error: e}
+            }
+        }
+    }
+
+    private getKeyAccounts() {
         return [this.benchConfig.fromAccount];
     }
 
-    getActions(uniqueData) {
+    private getActions(uniqueData: any) {
         return [
             {
                 account: this.benchConfig.tokenAccount.name,
@@ -62,37 +102,5 @@ class SimpleBenchProfile extends BenchProfile {
             }
         ]
     }
-
-    async commitTransaction(uniqueData) {
-        let api = this.api;
-        let exp = (new Date().getTime() + this.benchConfig.expireSeconds * 1000) * 1000;
-        let transaction = {
-            expiration: ser.timePointToDate(exp),
-            ...this.transactionDummy,
-            actions: await api.serializeActions(this.getActions(uniqueData))
-        };
-        let serializedTransaction = api.serializeTransaction(transaction);
-
-        let signArgs = {
-            requiredKeys: [this.benchConfig.fromAccount.publicKey],
-            abis: this.benchConfig.abis,
-            chainId: api.chainId,
-            serializedTransaction: serializedTransaction
-        };
-
-        let pushTransactionArgs = await this.signatureProvider.sign(signArgs);
-
-        try {
-            await this.rpc.push_transaction(pushTransactionArgs);
-            return {code: 200, error: null}
-        } catch (e) {
-            try {
-                return {code: e.json.code, error: e}
-            } catch (e2) {
-                return {code: -1, error: e}
-            }
-        }
-    }
 }
 
-module.exports = SimpleBenchProfile;

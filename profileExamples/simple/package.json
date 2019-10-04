@@ -1,0 +1,22 @@
+{
+  "name": "polkaprofile",
+  "version": "1.0.0",
+  "description": "",
+  "main": "SimpleBenchProfile.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "eosjs": "^20.0.0",
+    "eosjs-ecc": "^4.0.4",
+    "node-eosjs-signature-provider": "2.0.2",
+    "node-fetch": "^2.6.0",
+    "tank.bench-common": "4.0.5",
+    "text-encoding": "^0.7.0",
+    "@types/node-fetch": "^2.5.0",
+    "@types/text-encoding": "0.0.35"
+  },
+  "devDependencies": {
+    "source-map-support": "^0.5.13",
+    "tank.bench-profile-compiler": "^1.1.0",
+    "typescript": "^3.6.3"
+  }
+}
