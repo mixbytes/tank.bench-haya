@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 
-COPY . /workdir
-WORKDIR /workdir
+COPY . /tool
+WORKDIR /tool
 
 RUN apt-get update && \
     apt-get install curl -y && \
