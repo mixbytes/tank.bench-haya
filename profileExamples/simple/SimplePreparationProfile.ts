@@ -14,7 +14,7 @@ export default class SimplePreparationProfile extends PreparationProfile {
     private api?: Api;
 
     async asyncConstruct() {
-        this.rpc = new JsonRpc(this.moduleConfig.rpcUrls[0], {fetch});
+        this.rpc = new JsonRpc(this.moduleConfig.rpcUrls[0], {fetch: fetch.default ? fetch.default : fetch});
         this.transactionsConf = {
             blocksBehind: this.moduleConfig.blocksBehind,
             expireSeconds: this.moduleConfig.expireSeconds,

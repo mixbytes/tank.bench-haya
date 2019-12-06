@@ -19,7 +19,7 @@ export default class SimpleBenchProfile extends BenchProfile {
 
         this.rpc = new JsonRpc(
             this.benchConfig.rpcUrls[Math.floor(threadId / this.benchConfig.urlsPerThread)],
-            {fetch}
+            {fetch: fetch.default ? fetch.default : fetch}
         );
 
         this.signatureProvider = new NodeEosjsSignatureProvider(
