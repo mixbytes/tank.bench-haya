@@ -9,12 +9,12 @@ RUN apt-get update && \
     bash install_nvm.sh && \
     export NVM_DIR="$HOME/.nvm" && \
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
-    nvm install --latest-npm 12.4.0 && \
-    nvm use --delete-prefix 12.4.0 && \
+    nvm install --latest-npm 12.5.0 && \
+    nvm use --delete-prefix 12.5.0 && \
     npm install && \
     npm run build
 
-ENV PATH=$PATH:/root/.nvm/versions/node/v12.4.0/bin/
+ENV PATH=$PATH:/root/.nvm/versions/node/v12.5.0/bin/
 
 ENTRYPOINT ["npm", "start", "--"]
 CMD []
