@@ -17,7 +17,7 @@
     "eosjs-ecc": "^4.0.7",
     "node-eosjs-signature-provider": "3.0.0",
     "node-fetch": "^2.6.0",
-    "tank.bench-common": "^5.1.4",
+    "tank.bench-common": "^5.1.5",
     "tank.bench-profile": "^1.0.2",
     "haya-common-tools": "file:./../../haya-common-tools",
     "text-encoding": "^0.7.0",
