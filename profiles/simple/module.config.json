@@ -1,0 +1,43 @@
+{
+  "rpcUrls": [
+    "http://localhost:8888"
+  ],
+  "tokensContract": {
+    "wasmFilePath": "../../haya-common-tools/contracts/eosio.token/eosio.token.wasm",
+    "abiFilePath": "../../haya-common-tools/contracts/eosio.token/eosio.token.abi"
+  },
+  "blocksBehind": 30,
+  "expireSeconds": 120,
+  "transactions": {
+    "tokenName": "SYS",
+    "deployTokenContract": true,
+    "createTokens": true,
+    "issueTokens": true,
+    "createTokensAmount": "1000000.0000",
+    "issueTokensAmount": "1000000.0000",
+    "tokensInOneTransfer": "0.0001",
+    "keyPoints": 10,
+    "keyPointsAmount": 1000,
+    "threadsAmount": 8,
+    "stopOnError": "print",
+    "highloadWritesCount": 100
+  },
+  "creatorAccount": {
+    "name": "eosio",
+    "privateKey": "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3"
+  },
+  "toAccount": {
+    "create": true,
+    "name": ""
+  },
+  "fromAccount": {
+    "create": true,
+    "name": "",
+    "privateKey": ""
+  },
+  "tokenAccount": {
+    "create": true,
+    "name": "",
+    "privateKey": ""
+  }
+}

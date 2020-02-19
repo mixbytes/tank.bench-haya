@@ -1,0 +1,30 @@
+{
+  "name": "transfer-haya-profile",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Profile.ts",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "npx bpc .",
+    "debug": "npx tank-bench .",
+    "start": "npm run debug",
+    "start-file": "npx tank-bench dist/profile.js"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.5.4",
+    "@types/text-encoding": "0.0.35",
+    "eosjs": "^20.0.3",
+    "eosjs-ecc": "^4.0.7",
+    "node-eosjs-signature-provider": "3.0.0",
+    "node-fetch": "^2.6.0",
+    "tank.bench-common": "^5.1.4",
+    "tank.bench-profile": "^1.0.2",
+    "haya-common-tools": "file:./../../haya-common-tools",
+    "text-encoding": "^0.7.0",
+    "tank.bench-profile-compiler": "2.3.3"
+  },
+  "devDependencies": {
+    "source-map-support": "^0.5.16",
+    "typescript": "^3.7.5"
+  }
+}
