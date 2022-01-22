@@ -16,7 +16,7 @@
     "eosjs": "^20.0.3",
     "eosjs-ecc": "^4.0.7",
     "node-eosjs-signature-provider": "3.0.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "tank.bench-common": "^5.1.5",
     "tank.bench-profile": "^1.0.2",
     "haya-common-tools": "file:./../../haya-common-tools",
